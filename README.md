@@ -1,3 +1,7 @@
+### Aplicação em React JS para controle de orçamento familiar/ pessoal;
+#### Sistema com tela de login e senha e lançamentos de receita e despesas;
+
+### backend em Java: https://github.com/daniloalalmeida-dev/apiRestJavaSpringBoot
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
