@@ -1,13 +1,18 @@
-import 'bootswatch/dist/flatly/bootstrap.css'
-import './custom.css'
+import React from "react";
 
-import Login from './views/login'
+import "bootswatch/dist/flatly/bootstrap.css";
+import "./custom.css";
+import MainRoutes from "./routes";
+import Navbar from "./components/navbar";
 
 function App() {
   return (
-    <div className="App">
-      <Login/>
-    </div>
+    <>
+      <Navbar />
+      <div className="container">
+        <MainRoutes />
+      </div>
+    </>
   );
 }
 
