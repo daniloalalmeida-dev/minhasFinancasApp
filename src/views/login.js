@@ -3,12 +3,12 @@ import Card from "../components/cards";
 import FormGroup from "../components/form-group";
 import { useNavigate } from "react-router-dom";
 import api from "./../service/api";
+import { errorMessage, successMessage } from "../components/toastrMessages";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-
+  
   const signIn = async () => {
     await api
       .post("/api/usuarios/autenticar", {
@@ -16,11 +16,12 @@ const Login = () => {
         senha: senha,
       })
       .then((response) => {
-        console.log(response);
+        localStorage.setItem('_usuario_logado', JSON.stringify(response.data))
+        successMessage("Logado com sucesso!");
         navigate("/home");
       })
       .catch((erro) => {
-        setErrorMessage(erro.response.data);
+        errorMessage(erro.response.data);
       });
   };
 
@@ -38,7 +39,6 @@ const Login = () => {
               <div className="row">
                 <div className="col-lg-12">
                   <div className="bs-component">
-                    <div>{errorMessage}</div>
                     <fieldset>
                       <FormGroup label="E-mail: *" htmlFor="exampleInputEmail1">
                         <input

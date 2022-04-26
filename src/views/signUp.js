@@ -3,19 +3,61 @@ import { useNavigate } from "react-router-dom";
 import Card from "../components/cards";
 import FormGroup from "../components/form-group";
 import "./../custom.css";
+import api from "../service/api";
+import { successMessage, errorMessage } from "../components/toastrMessages";
 
 const SignUp = () => {
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [senhaRepeticao, setSenhaRepeticao] = useState('');
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [senhaRepeticao, setSenhaRepeticao] = useState("");
 
   const navigate = useNavigate();
 
-  const cadastrou = () => {
-    console.log("Cadastrou: ", nome, email, senha, senhaRepeticao);
-    navigate('/')
-  }
+  const validateForm = () => {
+    const messages = [];
+
+    if (!nome) {
+      messages.push("O campo Nome é obrigatório.");
+    }
+
+    if (!email) {
+      messages.push("O campo E-mail é obrigatório");
+    } else if (!email.match(/^[a-z0-9.]+@[a-z0-9]+\.[a-z]/)) {
+      messages.push("Informe um e-mail válido.");
+    }
+
+    if (!senha || senha !== senhaRepeticao) {
+      messages.push("As senhas devem ser iguais.");
+    }
+
+    return messages;
+  };
+
+  const signUpNewUser = async () => {
+    const messages = validateForm();
+
+    if (messages && messages.length > 0) {
+      messages.forEach((messages, index) => {
+        errorMessage(messages);
+      });
+      return false;
+    }
+
+    await api
+      .post("/api/usuarios", {
+        nome: nome,
+        email: email,
+        senha: senha,
+      })
+      .then((response) => {
+        successMessage("Cadastrado com sucesso!");
+        navigate("/");
+      })
+      .catch((erro) => {
+        errorMessage(erro.response.data);
+      });
+  };
 
   return (
     <div className="container">
@@ -31,7 +73,7 @@ const SignUp = () => {
                   className="form-control"
                   placeholder="Digite o Nome"
                   value={nome}
-                  onChange={e => setNome(e.target.value)}
+                  onChange={(e) => setNome(e.target.value)}
                 />
               </FormGroup>
               <FormGroup label="E-mail: *" htmlFor="inputEmail">
@@ -42,8 +84,7 @@ const SignUp = () => {
                   className="form-control"
                   placeholder="Digite seu E-mail"
                   value={email}
-                  onChange={e =>
-                    setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </FormGroup>
               <FormGroup label="Senha: *" htmlFor="inputPassword">
@@ -53,7 +94,7 @@ const SignUp = () => {
                   className="form-control"
                   placeholder="Senha"
                   value={senha}
-                  onChange={e => setSenha(e.target.value)}
+                  onChange={(e) => setSenha(e.target.value)}
                 />
               </FormGroup>
               <FormGroup label="Repita a Senha: *" htmlFor="inputPassword">
@@ -63,13 +104,13 @@ const SignUp = () => {
                   id="inputPassword1"
                   placeholder="Repita sua Senha"
                   value={senhaRepeticao}
-                  onChange={e => setSenhaRepeticao(e.target.value)}
+                  onChange={(e) => setSenhaRepeticao(e.target.value)}
                 />
               </FormGroup>
               <button
                 type="button"
                 className="btn btn-success"
-                onClick={cadastrou}
+                onClick={signUpNewUser}
               >
                 Salvar
               </button>

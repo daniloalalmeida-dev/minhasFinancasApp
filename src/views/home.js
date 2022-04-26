@@ -2,18 +2,22 @@ import React, { useState, useEffect } from "react";
 import api from "../service/api";
 
 const Home = () => {
+  const [saldo, setSaldo] = useState(0);
 
-const [saldo, setSaldo] = useState(0);
+  useEffect(() => {
 
-useEffect(() => {
-    api.get("/api/usuarios/3/saldo")
+    const usuarioLogadoString = localStorage.getItem('_usuario_logado')
+    const usuarioLogado = JSON.parse(usuarioLogadoString)
+
+    api
+      .get(`/api/usuarios/${usuarioLogado.id}/saldo`)
       .then((response) => {
-        setSaldo(response.data)
+        setSaldo(response.data);
       })
       .catch((erro) => {
         console.error(erro.response.data);
       });
-  })
+  });
 
   return (
     <div className="jumbotron">
@@ -26,18 +30,10 @@ useEffect(() => {
         para navegar pelo sistema.
       </p>
       <p className="lead">
-        <a
-          className="btn btn-primary btn-lg"
-          href="/users"
-          role="button"
-        >
+        <a className="btn btn-primary btn-lg" href="/users" role="button">
           <i className="fa fa-users"></i> Cadastrar Usuário
         </a>
-        <a
-          className="btn btn-danger btn-lg"
-          href="/posting"
-          role="button"
-        >
+        <a className="btn btn-danger btn-lg" href="/posting" role="button">
           <i className="fa fa-users"></i> Cadastrar Lançamento
         </a>
       </p>
