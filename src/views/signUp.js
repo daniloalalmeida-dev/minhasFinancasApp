@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Card from "../components/cards";
 import FormGroup from "../components/form-group";
 import "./../custom.css";
-import api from "../service/api";
+import UserService from "../service/resources/userService";
 import { successMessage, errorMessage } from "../components/toastrMessages";
 
 const SignUp = () => {
@@ -11,6 +11,8 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [senhaRepeticao, setSenhaRepeticao] = useState("");
+
+  const userService = new UserService();
 
   const navigate = useNavigate();
 
@@ -44,12 +46,14 @@ const SignUp = () => {
       return false;
     }
 
-    await api
-      .post("/api/usuarios", {
-        nome: nome,
-        email: email,
-        senha: senha,
-      })
+    const user = {
+      nome: nome,
+      email: email,
+      senha: senha,
+    };
+
+    await userService
+      .signUpNewUser(user)
       .then((response) => {
         successMessage("Cadastrado com sucesso!");
         navigate("/");

@@ -2,30 +2,32 @@ import React, { useState } from "react";
 import Card from "../components/cards";
 import FormGroup from "../components/form-group";
 import { useNavigate } from "react-router-dom";
-import api from "./../service/api";
+import UserService from "../service/resources/userService";
 import { errorMessage, successMessage } from "../components/toastrMessages";
+import LocalStorageService from "../service/resources/localStorageService";
 
-const Login = () => {
+const SignIn = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  
-  const signIn = async () => {
-    await api
-      .post("/api/usuarios/autenticar", {
+
+  const userService = new UserService();
+  const navigate = useNavigate();
+
+  const signInData = () => {
+    userService
+      .authUser({
         email: email,
         senha: senha,
       })
       .then((response) => {
-        localStorage.setItem('_usuario_logado', JSON.stringify(response.data))
-        successMessage("Logado com sucesso!");
+        LocalStorageService.addItem('_logged_user', response.data)
+        successMessage('Usuário logado com sucesso!')
         navigate("/home");
       })
-      .catch((erro) => {
-        errorMessage(erro.response.data);
+      .catch((error) => {
+        errorMessage(error.response.data);
       });
   };
-
-  const navigate = useNavigate();
 
   return (
     <div className="container">
@@ -35,7 +37,7 @@ const Login = () => {
           style={{ position: "relative", left: "300px" }}
         >
           <div className="bs-docs-section">
-            <Card title="Login">
+            <Card title="Acessar Conta">
               <div className="row">
                 <div className="col-lg-12">
                   <div className="bs-component">
@@ -64,7 +66,7 @@ const Login = () => {
                           onChange={(e) => setSenha(e.target.value)}
                         />
                       </FormGroup>
-                      <button className="btn btn-success" onClick={signIn}>
+                      <button className="btn btn-success" onClick={signInData}>
                         Entrar
                       </button>
                       <button
@@ -85,4 +87,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignIn;

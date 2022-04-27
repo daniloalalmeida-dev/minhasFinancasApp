@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from "react";
-import api from "../service/api";
+import UserService from "../service/resources/userService";
+import { errorMessage } from "../components/toastrMessages";
+import LocalStorageService from "../service/resources/localStorageService";
 
 const Home = () => {
   const [saldo, setSaldo] = useState(0);
+  const userService = new UserService();
 
   useEffect(() => {
+    const loggedUser = LocalStorageService.getLocalLoggedUser('_logged_user');
 
-    const usuarioLogadoString = localStorage.getItem('_usuario_logado')
-    const usuarioLogado = JSON.parse(usuarioLogadoString)
-
-    api
-      .get(`/api/usuarios/${usuarioLogado.id}/saldo`)
+    userService
+      .getAmountByUser(loggedUser.id)
       .then((response) => {
         setSaldo(response.data);
       })
-      .catch((erro) => {
-        console.error(erro.response.data);
+      .catch((error) => {
+        errorMessage(error.response.data);
       });
   });
 
