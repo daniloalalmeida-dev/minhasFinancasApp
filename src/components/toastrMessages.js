@@ -17,7 +17,6 @@ toastr.options = {
   showMethod: "fadeIn",
   hideMethod: "fadeOut",
 };
-
 export const showMessages = (title, message, type) => {
   toastr[type](message, title);
 };

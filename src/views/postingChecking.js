@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import Card from "../components/cards";
 import FormGroup from "../components/form-group";
 import SelectMenu from "../components/selectMenu";
-import { alertMessage, errorMessage } from "../components/toastrMessages";
+import {
+  alertMessage,
+  errorMessage,
+  successMessage,
+} from "../components/toastrMessages";
 import PostingService from "../service/resources/postingService";
 import LocalStorageService from "../service/resources/localStorageService";
 import PostingTable from "../components/postingTable";
@@ -12,15 +16,14 @@ export const PostingChecking = () => {
   const [mes, setMes] = useState("");
   const [tipo, setTipo] = useState("");
   const [descricao, setDescricao] = useState("");
-//  const [status, setStatus] = useState("");
   const [lancamentos, setLancamentos] = useState([]);
-
+  
   const postingService = new PostingService();
 
   const searcher = async () => {
-    if(!ano){
-      errorMessage("O campo Ano é obrigatório.")
-      return
+    if (!ano) {
+      errorMessage("O campo Ano é obrigatório.");
+      return;
     }
 
     const loggedUser = LocalStorageService.getLocalLoggedUser("_logged_user");
@@ -36,8 +39,8 @@ export const PostingChecking = () => {
     await postingService
       .checkPosting(filterPostingBy)
       .then((response) => {
-        if(response.data.length < 1){
-          alertMessage("Não há lançamentos para este ano.")
+        if (response.data.length < 1) {
+          alertMessage("Não há lançamentos para este ano.");
         }
         setLancamentos(response.data);
       })
@@ -47,16 +50,26 @@ export const PostingChecking = () => {
   };
 
   const meses = postingService.getMonthsList();
-
   const tipos = postingService.getTypeList();
 
   const editPosting = (id) => {
-    console.log('editando:', id)
-  }
+    console.log("editando:", id);
+  };
 
-  const deletePosting = (id) => {
-    console.log('deletando:', id)
-  }
+  const deletePosting = (lancamento) => {
+    postingService
+      .deletePosting(lancamento.id)
+      .then((response) => {
+        const index = lancamentos.indexOf(lancamento);
+        lancamentos.splice(index);
+        setLancamentos(lancamentos)
+        searcher()
+        successMessage("Lançamento deletado com sucesso.");
+      })
+      .catch((error) => {
+        errorMessage(error.response.data);
+      });
+  };
 
   return (
     <Card title="Consulta Lançamentos">
@@ -119,13 +132,14 @@ export const PostingChecking = () => {
       <div className="row">
         <div className="col-md-12">
           <div className="bs-component">
-            <PostingTable lancamentos={lancamentos} 
+            <PostingTable
+              lancamentos={lancamentos}
               deleteAction={deletePosting}
               editAction={editPosting}
-            />
+             />
           </div>
         </div>
       </div>
-    </Card>
+ </Card>
   );
 };
