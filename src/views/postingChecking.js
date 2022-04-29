@@ -10,6 +10,7 @@ import {
 import PostingService from "../service/resources/postingService";
 import LocalStorageService from "../service/resources/localStorageService";
 import PostingTable from "../components/postingTable";
+import { useNavigate } from "react-router-dom";
 
 export const PostingChecking = () => {
   const [ano, setAno] = useState("");
@@ -17,8 +18,9 @@ export const PostingChecking = () => {
   const [tipo, setTipo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [lancamentos, setLancamentos] = useState([]);
-  
+
   const postingService = new PostingService();
+  const navigate = useNavigate();
 
   const searcher = async () => {
     if (!ano) {
@@ -53,7 +55,7 @@ export const PostingChecking = () => {
   const tipos = postingService.getTypeList();
 
   const editPosting = (id) => {
-    console.log("editando:", id);
+    navigate(`/posting-setup/${id}`)
   };
 
   const deletePosting = (lancamento) => {
@@ -62,8 +64,8 @@ export const PostingChecking = () => {
       .then((response) => {
         const index = lancamentos.indexOf(lancamento);
         lancamentos.splice(index);
-        setLancamentos(lancamentos)
-        searcher()
+        setLancamentos(lancamentos);
+        searcher();
         successMessage("Lançamento deletado com sucesso.");
       })
       .catch((error) => {
@@ -72,7 +74,7 @@ export const PostingChecking = () => {
   };
 
   return (
-    <Card title="Consulta Lançamentos">
+    <Card title="Consulta de Lançamentos">
       <div className="row">
         <div className="col-md-6">
           <div className="bs-component">
@@ -122,9 +124,9 @@ export const PostingChecking = () => {
             >
               Buscar
             </button>
-            <button type="button" className="btn btn-danger">
-              Cadastrar
-            </button>
+            <a className="btn btn-danger" href="/posting-setup/">
+              Cadastrar Novo
+            </a>
           </div>
         </div>
       </div>
@@ -136,10 +138,10 @@ export const PostingChecking = () => {
               lancamentos={lancamentos}
               deleteAction={deletePosting}
               editAction={editPosting}
-             />
+            />
           </div>
         </div>
       </div>
- </Card>
+    </Card>
   );
 };

@@ -1,5 +1,4 @@
 import ApiService from "../api";
-
 export default class PostingService extends ApiService {
   constructor() {
     super("/api/lancamentos");
@@ -31,7 +30,27 @@ export default class PostingService extends ApiService {
     ];
   }
 
-  checkPosting = (filterPostingBy) => {
+  getPostingById(id) {
+    return this.get(`/${id}`);
+  }
+
+  handleChangeStatus(id, status) {
+    return this.put(`/${id}`, { status })
+  }
+
+  handleSubmit(lancamento) {
+    return this.post("/", lancamento);
+  }
+
+  handleSubmitUpdate(lancamento) {
+    return this.put(`/${lancamento.id}`, lancamento);
+  }
+
+  deletePosting(id) {
+    return this.delete(`/${id}`);
+  }
+
+  checkPosting(filterPostingBy) {
     let params = `?ano=${filterPostingBy.ano}`;
 
     if (filterPostingBy.mes) {
@@ -51,12 +70,9 @@ export default class PostingService extends ApiService {
     }
 
     if (filterPostingBy.descricao) {
-        params = `${params}&descricao=${filterPostingBy.descricao}`
+      params = `${params}&descricao=${filterPostingBy.descricao}`;
     }
 
     return this.get(params);
-  }
-  deletePosting(id){
-    return this.delete(`/${id}`)
   }
 }

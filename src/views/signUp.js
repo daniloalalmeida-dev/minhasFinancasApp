@@ -58,8 +58,8 @@ const SignUp = () => {
         successMessage("Cadastrado com sucesso!");
         navigate("/");
       })
-      .catch((erro) => {
-        errorMessage(erro.response.data);
+      .catch((error) => {
+        errorMessage(error.response.data);
       });
   };
 
